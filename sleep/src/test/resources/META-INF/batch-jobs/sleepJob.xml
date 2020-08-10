@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<job version="1.0" id="sleepJob" xmlns="http://xmlns.jcp.org/xml/ns/javaee">
+	<step id="step1">
+		<batchlet ref="sleepBatchlet">
+			<properties>
+				<property name="delay" value="4"/>
+			</properties>
+		</batchlet>
+	</step>
+</job>

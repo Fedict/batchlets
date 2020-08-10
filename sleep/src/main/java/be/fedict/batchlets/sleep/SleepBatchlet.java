@@ -28,9 +28,11 @@ package be.fedict.batchlets.sleep;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.batch.api.AbstractBatchlet;
+import javax.batch.api.BatchProperty;
 import javax.batch.runtime.BatchStatus;
-import javax.batch.runtime.context.StepContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,16 +42,20 @@ import javax.inject.Named;
  */
 @Named
 public class SleepBatchlet extends AbstractBatchlet {
+	private Logger logger = Logger.getLogger(SleepBatchlet.class.getName());
+
 	private ScheduledExecutorService scheduler;
 
-	@Inject StepContext ctx;
-	 
+	@Inject
+	@BatchProperty
+	int delay;
+	
 	@Override
-	public String process() throws Exception {			
-		String delay = ctx.getProperties().getProperty("delay", "5");
-		
+	public String process() throws Exception {
+		logger.log(Level.INFO, "Sleeping for {0} seconds", delay);
 		scheduler = Executors.newSingleThreadScheduledExecutor();
-		scheduler.schedule(() -> {}, Integer.parseInt(delay), TimeUnit.SECONDS);
+		scheduler.awaitTermination(delay, TimeUnit.SECONDS);
+		scheduler.shutdown();
 		return BatchStatus.COMPLETED.toString();
 	}
 	
