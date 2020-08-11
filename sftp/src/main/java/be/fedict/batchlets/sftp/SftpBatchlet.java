@@ -25,23 +25,25 @@
  */
 package be.fedict.batchlets.sftp;
 
-import bayern.steinbrecher.jsch.ChannelSftp;
-import bayern.steinbrecher.jsch.JSch;
-import bayern.steinbrecher.jsch.JSchException;
-import bayern.steinbrecher.jsch.Session;
-import bayern.steinbrecher.jsch.SftpException;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.batch.api.AbstractBatchlet;
 import javax.batch.api.BatchProperty;
 import javax.batch.runtime.BatchStatus;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Download or upload a file via SFTP
  * 
  * @author Bart Hanssens
  */
+@Named
 public class SftpBatchlet extends AbstractBatchlet {
 	private Logger logger = Logger.getLogger(SftpBatchlet.class.getName());
 
@@ -49,6 +51,10 @@ public class SftpBatchlet extends AbstractBatchlet {
 	@BatchProperty
 	String fromSite;
 	
+	@Inject 
+	@BatchProperty
+	int fromPort;
+
 	@Inject 
 	@BatchProperty
 	String fromFile;
@@ -67,6 +73,10 @@ public class SftpBatchlet extends AbstractBatchlet {
 	
 	@Inject 
 	@BatchProperty
+	int toPort;
+
+	@Inject 
+	@BatchProperty
 	String toFile;
 
 	@Inject 
@@ -76,7 +86,11 @@ public class SftpBatchlet extends AbstractBatchlet {
 	@Inject 
 	@BatchProperty
 	String toPass;
-		
+
+	@Inject 
+	@BatchProperty
+	boolean insecure;
+
 	private JSch sftp;
 	private Session session;
 
@@ -96,6 +110,31 @@ public class SftpBatchlet extends AbstractBatchlet {
 		return true;
 	}
 
+	/**
+	 * Open a session
+	 * 
+	 * @param site
+	 * @param port
+	 * @param user
+	 * @param pass
+	 * @throws JSchException 
+	 */
+	private void openSession(String site, int port, String user, String pass) throws JSchException {
+		session = sftp.getSession(user, site);
+		session.setPassword(pass);
+		if (port > 0) {
+			session.setPort(port);
+		}
+		session.connect();
+	}
+
+	/**
+	 * Download file from SFTP server
+	 * 
+	 * @return
+	 * @throws JSchException
+	 * @throws SftpException 
+	 */
 	private boolean download() throws JSchException, SftpException {
 		logger.log(Level.INFO, "Download from server {0}", fromSite);
 			
@@ -103,17 +142,14 @@ public class SftpBatchlet extends AbstractBatchlet {
 			logger.severe("User or password is empty");
 			return false;
 		}
-
-		session = sftp.getSession(fromSite, fromUser);
-		session.setPassword(fromPass);
-		session.connect();
+		openSession(fromSite, fromPort, fromUser, fromPass);
 
 		ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
 		channel.connect();
 		channel.get(fromFile, toFile);
 		channel.disconnect();
 		int status = channel.getExitStatus();
-			
+
 		session.disconnect();
 			
 		if (status != 0) {
@@ -123,6 +159,13 @@ public class SftpBatchlet extends AbstractBatchlet {
 		return true;
 	}
 
+	/**
+	 * Upload file to SFTP server
+	 * 
+	 * @return
+	 * @throws JSchException
+	 * @throws SftpException 
+	 */
 	private boolean upload() throws JSchException, SftpException {
 		logger.log(Level.INFO, "Upload to server {0}", toSite);
 
@@ -131,9 +174,7 @@ public class SftpBatchlet extends AbstractBatchlet {
 			return false;
 		}
 
-		session = sftp.getSession(toSite, toUser);
-		session.setPassword(toPass);
-		session.connect();
+		openSession(toSite, toPort, toUser, toPass);
 
 		ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
 		channel.connect();
@@ -158,6 +199,9 @@ public class SftpBatchlet extends AbstractBatchlet {
 		}
 		
 		sftp = new JSch();
+		if (insecure) {
+			sftp.setConfig("StrictHostKeyChecking", "no");
+		}
 
 		try {
 			if (fromSite != null && !download()) {
