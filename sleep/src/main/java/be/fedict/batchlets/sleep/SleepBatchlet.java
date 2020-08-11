@@ -35,21 +35,24 @@ import javax.batch.api.BatchProperty;
 import javax.batch.runtime.BatchStatus;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.Min;
 
 /**
- *
- * @author Bart.Hanssens
+ * Sleeps for a number of seconds.
+ * 
+ * @author Bart Hanssens
  */
 @Named
 public class SleepBatchlet extends AbstractBatchlet {
-	private Logger logger = Logger.getLogger(SleepBatchlet.class.getName());
+	private static final Logger logger = Logger.getLogger(SleepBatchlet.class.getName());
 
 	private ScheduledExecutorService scheduler;
 
 	@Inject
 	@BatchProperty
+	@Min(1)
 	int delay;
-	
+
 	@Override
 	public String process() throws Exception {
 		logger.log(Level.INFO, "Sleeping for {0} seconds", delay);

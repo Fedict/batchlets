@@ -7,20 +7,14 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>be.fedict.batchlets</groupId>
-    <artifactId>sftp</artifactId>
+    <artifactId>unpack</artifactId>
     <packaging>jar</packaging>
+    <name>Unpack Batchlet</name>
     <dependencies>
         <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.55</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.20</version>
         </dependency>
-		<dependency>
-			<groupId>com.github.stefanbirkner</groupId>
-			<artifactId>fake-sftp-server-rule</artifactId>
-			<version>2.0.1</version>
-			<scope>test</scope>
-		</dependency>
     </dependencies>
-    <name>SFTP Batchlet</name>
 </project>

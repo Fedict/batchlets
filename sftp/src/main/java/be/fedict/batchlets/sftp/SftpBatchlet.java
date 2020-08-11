@@ -37,15 +37,19 @@ import javax.batch.api.BatchProperty;
 import javax.batch.runtime.BatchStatus;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 /**
- * Download or upload a file via SFTP
+ * Download or upload a file via SFTP (not both)
  * 
  * @author Bart Hanssens
  */
 @Named
 public class SftpBatchlet extends AbstractBatchlet {
-	private Logger logger = Logger.getLogger(SftpBatchlet.class.getName());
+	private static final Logger logger = Logger.getLogger(SftpBatchlet.class.getName());
 
 	@Inject 
 	@BatchProperty
@@ -53,10 +57,13 @@ public class SftpBatchlet extends AbstractBatchlet {
 	
 	@Inject 
 	@BatchProperty
+	@PositiveOrZero
 	int fromPort;
 
 	@Inject 
 	@BatchProperty
+	@NotNull
+	@NotBlank
 	String fromFile;
 
 	@Inject 
@@ -73,10 +80,13 @@ public class SftpBatchlet extends AbstractBatchlet {
 	
 	@Inject 
 	@BatchProperty
+	@PositiveOrZero
 	int toPort;
 
 	@Inject 
 	@BatchProperty
+	@NotNull
+	@NotBlank
 	String toFile;
 
 	@Inject 
