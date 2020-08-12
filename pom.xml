@@ -10,6 +10,7 @@
 	 <module>sftp</module>
 	 <module>unpack</module>
 	 <module>verifyfile</module>
+	 <module>HttpGet</module>
 	</modules>
 	<dependencies>
 		<dependency>

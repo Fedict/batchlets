@@ -28,7 +28,6 @@ package be.fedict.batchelets.verifyfile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.logging.Level;
@@ -81,7 +80,7 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 	@Inject
 	@BatchProperty
 	Date maxDate;
-	
+
 	/**
 	 * Get the file or list of files to validate
 	 * 
