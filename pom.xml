@@ -9,6 +9,7 @@
 		<module>sleep</module>
 	 <module>sftp</module>
 	 <module>unpack</module>
+	 <module>verifyfile</module>
 	</modules>
 	<dependencies>
 		<dependency>
