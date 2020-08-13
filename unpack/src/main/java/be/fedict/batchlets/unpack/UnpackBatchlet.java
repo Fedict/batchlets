@@ -74,9 +74,9 @@ public class UnpackBatchlet extends AbstractBatchlet {
 
 			ArchiveEntry entry = archive.getNextEntry();
 			while (entry != null) {
-				logger.log(Level.FINER, "Extracting {0}", entry.getName());
-
 				File outfile = Paths.get(outputDir.toString(), entry.getName()).toFile();
+				logger.log(Level.FINER, "Extracting {0} to {1}", new String[] { entry.getName(), outfile.toString() });
+
 				if (entry.isDirectory()) {
 					if (!outfile.isDirectory() && ! outfile.mkdirs()) {
 						logger.log(Level.SEVERE, "Could not create {0}", outfile);
@@ -92,6 +92,7 @@ public class UnpackBatchlet extends AbstractBatchlet {
 						IOUtils.copy(archive, out);
 					}
 				}
+				entry = archive.getNextEntry();
 			}
 		}
 		return BatchStatus.COMPLETED.toString();

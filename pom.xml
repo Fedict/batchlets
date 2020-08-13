@@ -7,10 +7,11 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>sleep</module>
-	 <module>sftp</module>
-	 <module>unpack</module>
-	 <module>verifyfile</module>
-	 <module>HttpGet</module>
+		<module>sftp</module>
+		<module>unpack</module>
+		<module>verifyfile</module>
+		<module>httpget</module>
+		<module>abstractbatchlet</module>
 	</modules>
 	<dependencies>
 		<dependency>
