@@ -26,6 +26,7 @@
 package be.fedict.batchlets.test;
 
 import java.util.Properties;
+import javax.batch.runtime.BatchStatus;
 import org.jberet.job.model.Job;
 import org.jberet.job.model.JobBuilder;
 import org.jberet.job.model.StepBuilder;
@@ -47,8 +48,12 @@ public class BatchletTest {
 	 * @return 
 	 */
 	protected JobExecutionImpl startBatchletJob(String batchlet, Properties props) {
-		Job job = new JobBuilder("job").restartable(false)
-					.step(new StepBuilder("step").batchlet(batchlet, props).build())
+		Job job = new JobBuilder("job")
+					.restartable(false)
+					.step(new StepBuilder("step")
+								.batchlet(batchlet, props)
+								.failOn(BatchStatus.FAILED.toString()).exitStatus(BatchStatus.FAILED.toString())
+						.build())
 					.build();
 
 		JobOperatorImpl operator = (JobOperatorImpl) JobOperatorContext.getJobOperatorContext().getJobOperator();

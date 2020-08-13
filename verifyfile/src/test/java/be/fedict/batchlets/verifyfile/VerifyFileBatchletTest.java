@@ -52,28 +52,26 @@ public class VerifyFileBatchletTest extends BatchletTest {
 	public final TemporaryFolder tmp = new TemporaryFolder();
 
 	@Test
-	public void download() throws Exception {
-		Path file = Paths.get(tmp.getRoot().toString(), "file.txt");
+	public void testExist() throws Exception {
+		tmp.newFile("file.txt");
 	
 		Properties props = new Properties();
-		props.putAll(Map.of("fromSite", "localhost",
-							"fromPort", "1234",
-							"fromFile", "/dir/file.txt",
-							"fromUser", "joe",
-							"fromPass", "pass",
-							"insecure", "true",
-							"toFile", file.toString()));
+		props.put("file", Paths.get(tmp.getRoot().toString(), "file.txt").toString());
 
 		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
-		execution.awaitTermination(10, TimeUnit.SECONDS);
-
+		execution.awaitTermination(4, TimeUnit.SECONDS);
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
-		assertTrue(file + " does not exist", Files.exists(file));
+	}
+
+	@Test
+	public void testDoesNotExist() throws Exception {
+		Properties props = new Properties();
+		props.put("file", "file.txt");
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
 	}
 	
-	
-	public void upload() throws Exception {
-		server.putFile("/dir/file.txt", "dummy", StandardCharsets.UTF_8);
-		
-	}
 }

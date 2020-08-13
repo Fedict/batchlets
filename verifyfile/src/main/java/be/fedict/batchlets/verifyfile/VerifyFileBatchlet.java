@@ -138,13 +138,13 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 	 * @return 
 	 */
 	private boolean checkSize(File f)  {
-		if (minSize == 0 && maxSize == 0) {
+		if (minSize == null && maxSize == null) {
 			return true;
 		}
 
 		try {
 			long size = Files.size(f.toPath());
-			if (size >= minSize && size <= maxSize) {
+			if ((minSize == null || size >= minSize) && (maxSize == null || size <= maxSize)) {
 				return true;
 			} else {
 				logger.log(Level.SEVERE, "Incorrect file size {0} for {1}", 
