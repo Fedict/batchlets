@@ -25,6 +25,7 @@
  */
 package be.fedict.batchlets.unpack;
 
+import be.fedict.batchlets.abstractbatchlet.AbstractBatchletTest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,7 +58,7 @@ import org.junit.rules.TemporaryFolder;
  * @author Bart.Hanssens
  */
 
-public class UnpackBatchletTest {
+public class UnpackBatchletTest extends AbstractBatchletTest {
 	@Rule
 	public final TemporaryFolder tmp = new TemporaryFolder();
 
@@ -84,20 +85,14 @@ public class UnpackBatchletTest {
 		String root = tmp.getRoot().toString();
 		File file = Paths.get(root, "test.zip").toFile();
 		File dir = Paths.get(root, "extract").toFile();
-		Path file1 = Paths.get(root, "exract", "file1.txt");
+		Path file1 = Paths.get(root, "extract", "file1.txt");
 		Path file2 = Paths.get(root, "extract", "file2.txt");
 
 		Properties props = new Properties();
 		props.putAll(Map.of("inputFile", file.toString(),
 							"outputDir", dir.toString()));
 
-		Job job = new JobBuilder("unpackJob").restartable(false)
-					.step(new StepBuilder("step1").batchlet("unpackBatchlet", props).build())
-					.build();
-
-		JobOperatorImpl operator = (JobOperatorImpl) JobOperatorContext.getJobOperatorContext().getJobOperator();
-		long id = operator.start(job, new Properties());
-		JobExecutionImpl execution = (JobExecutionImpl) operator.getJobExecution(id);
+		JobExecutionImpl execution = this.startBatchletJob("unpackBatchlet", props);
 		execution.awaitTermination(10, TimeUnit.SECONDS);
 
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());

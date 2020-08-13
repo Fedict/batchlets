@@ -59,4 +59,12 @@
 		</plugins>
 	</build>
     <name>Sleep Batchlet</name>
+    <dependencies>
+        <dependency>
+            <groupId>be.fedict.batchlets</groupId>
+            <artifactId>abstractbatchlet</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

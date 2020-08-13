@@ -7,7 +7,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>be.fedict.batchlets</groupId>
-    <artifactId>abstractbatchlet</artifactId>
+    <artifactId>test</artifactId>
     <packaging>jar</packaging>
-    <name>Abstract Batchlet</name>
+    <name>Batchlet Test</name>
+    <description>Provide batchlet test convenience methods</description>
 </project>

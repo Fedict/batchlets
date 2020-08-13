@@ -8,6 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>be.fedict.batchlets</groupId>
   <artifactId>sleep</artifactId>
+  <name>Sleep Batchlet</name>
   <build>
     <plugins>
       <plugin>
@@ -49,6 +50,12 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>be.fedict.batchlets</groupId>
+      <artifactId>abstractbatchlet</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -23,39 +23,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package be.fedict.batchlets.sleep;
+package be.fedict.batchlets.test;
 
-import be.fedict.batchlets.abstractbatchlet.AbstractBatchletTest;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import javax.batch.operations.JobOperator;
-import javax.batch.runtime.BatchRuntime;
-import javax.batch.runtime.BatchStatus;
+import org.jberet.job.model.Job;
+import org.jberet.job.model.JobBuilder;
+import org.jberet.job.model.StepBuilder;
+import org.jberet.operations.JobOperatorImpl;
 import org.jberet.runtime.JobExecutionImpl;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import org.jberet.spi.JobOperatorContext;
 
 /**
  *
  * @author Bart.Hanssens
  */
-
-public class SleepBatchletTest extends AbstractBatchletTest {
-	@Test
-	public void sleepOK() throws Exception {
-		Properties prop = new Properties();
-		prop.put("delay", "4");
-		JobExecutionImpl execution = startBatchletJob("sleepBatchlet", prop);
-		execution.awaitTermination(5, TimeUnit.SECONDS);
-		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
-	}
+public class BatchletTest {
 	
-	@Test
-	public void sleepLonger() throws Exception {
-		Properties prop = new Properties();
-		prop.put("delay", "4");
-		JobExecutionImpl execution = startBatchletJob("sleepBatchlet", prop);
-		execution.awaitTermination(2, TimeUnit.SECONDS);
-		assertEquals(BatchStatus.STARTED, execution.getBatchStatus());
+	/**
+	 * Define a batchlet job and start with specific set of properties
+	 * 
+	 * @param batchlet
+	 * @param props
+	 * @return 
+	 */
+	protected JobExecutionImpl startBatchletJob(String batchlet, Properties props) {
+		Job job = new JobBuilder("job").restartable(false)
+					.step(new StepBuilder("step").batchlet(batchlet, props).build())
+					.build();
+
+		JobOperatorImpl operator = (JobOperatorImpl) JobOperatorContext.getJobOperatorContext().getJobOperator();
+		long id = operator.start(job, new Properties());
+		return (JobExecutionImpl) operator.getJobExecution(id);
 	}
 }
