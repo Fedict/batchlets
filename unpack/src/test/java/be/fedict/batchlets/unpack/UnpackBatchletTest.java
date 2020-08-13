@@ -25,7 +25,7 @@
  */
 package be.fedict.batchlets.unpack;
 
-import be.fedict.batchlets.abstractbatchlet.AbstractBatchletTest;
+import be.fedict.batchlets.test.BatchletTest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,15 +37,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import javax.batch.operations.JobOperator;
-import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.BatchStatus;
-import org.jberet.job.model.Job;
-import org.jberet.job.model.JobBuilder;
-import org.jberet.job.model.StepBuilder;
-import org.jberet.operations.JobOperatorImpl;
 import org.jberet.runtime.JobExecutionImpl;
-import org.jberet.spi.JobOperatorContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -58,7 +51,7 @@ import org.junit.rules.TemporaryFolder;
  * @author Bart.Hanssens
  */
 
-public class UnpackBatchletTest extends AbstractBatchletTest {
+public class UnpackBatchletTest extends BatchletTest {
 	@Rule
 	public final TemporaryFolder tmp = new TemporaryFolder();
 
@@ -81,7 +74,7 @@ public class UnpackBatchletTest extends AbstractBatchletTest {
 	}
 
 	@Test
-	public void unpackZip() throws Exception {
+	public void testUnpackZip() throws Exception {
 		String root = tmp.getRoot().toString();
 		File file = Paths.get(root, "test.zip").toFile();
 		File dir = Paths.get(root, "extract").toFile();

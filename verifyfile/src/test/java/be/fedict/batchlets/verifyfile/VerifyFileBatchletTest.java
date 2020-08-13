@@ -23,9 +23,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package be.fedict.batchlets.sftp;
 
-import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
+package be.fedict.batchlets.verifyfile;
+
+import be.fedict.batchlets.test.BatchletTest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,12 +35,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import javax.batch.runtime.BatchStatus;
-import org.jberet.job.model.Job;
-import org.jberet.job.model.JobBuilder;
-import org.jberet.job.model.StepBuilder;
-import org.jberet.operations.JobOperatorImpl;
 import org.jberet.runtime.JobExecutionImpl;
-import org.jberet.spi.JobOperatorContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
@@ -51,17 +47,12 @@ import org.junit.rules.TemporaryFolder;
  * @author Bart.Hanssens
  */
 
-public class SftpBatchletTest {
-	@Rule
-	public final FakeSftpServerRule server = new FakeSftpServerRule().setPort(1234).addUser("joe", "pass");
-
+public class VerifyFileBatchletTest extends BatchletTest {
 	@Rule
 	public final TemporaryFolder tmp = new TemporaryFolder();
 
 	@Test
-	public void testDownload() throws Exception {
-		server.putFile("/dir/file.txt", "dummy", StandardCharsets.UTF_8);
-
+	public void download() throws Exception {
 		Path file = Paths.get(tmp.getRoot().toString(), "file.txt");
 	
 		Properties props = new Properties();
@@ -73,13 +64,7 @@ public class SftpBatchletTest {
 							"insecure", "true",
 							"toFile", file.toString()));
 
-		Job job = new JobBuilder("sftpJob").restartable(false)
-					.step(new StepBuilder("step1").batchlet("sftpBatchlet", props).build())
-					.build();
-
-		JobOperatorImpl operator = (JobOperatorImpl) JobOperatorContext.getJobOperatorContext().getJobOperator();
-		long id = operator.start(job, new Properties());
-		JobExecutionImpl execution = (JobExecutionImpl) operator.getJobExecution(id);
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
 		execution.awaitTermination(10, TimeUnit.SECONDS);
 
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());

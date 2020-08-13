@@ -25,12 +25,11 @@
  */
 package be.fedict.batchlets.sleep;
 
-import be.fedict.batchlets.abstractbatchlet.AbstractBatchletTest;
+import be.fedict.batchlets.test.BatchletTest;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import javax.batch.operations.JobOperator;
-import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.BatchStatus;
+import javax.inject.Named;
 import org.jberet.runtime.JobExecutionImpl;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -39,10 +38,10 @@ import org.junit.Test;
  *
  * @author Bart.Hanssens
  */
-
-public class SleepBatchletTest extends AbstractBatchletTest {
+@Named
+public class SleepBatchletTest extends BatchletTest {
 	@Test
-	public void sleepOK() throws Exception {
+	public void testSleepOK() throws Exception {
 		Properties prop = new Properties();
 		prop.put("delay", "4");
 		JobExecutionImpl execution = startBatchletJob("sleepBatchlet", prop);
@@ -51,7 +50,7 @@ public class SleepBatchletTest extends AbstractBatchletTest {
 	}
 	
 	@Test
-	public void sleepLonger() throws Exception {
+	public void testSleepLonger() throws Exception {
 		Properties prop = new Properties();
 		prop.put("delay", "4");
 		JobExecutionImpl execution = startBatchletJob("sleepBatchlet", prop);

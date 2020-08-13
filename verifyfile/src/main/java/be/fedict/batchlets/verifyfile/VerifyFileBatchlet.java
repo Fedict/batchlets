@@ -23,12 +23,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package be.fedict.batchelets.verifyfile;
+package be.fedict.batchlets.verifyfile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,11 +68,11 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 
 	@Inject
 	@BatchProperty
-	long minSize;
+	Long minSize;
 
 	@Inject
 	@BatchProperty
-	long maxSize;
+	Long maxSize;
 
 	@Inject
 	@BatchProperty
@@ -80,6 +81,15 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 	@Inject
 	@BatchProperty
 	Date maxDate;
+
+	@Inject
+	@BatchProperty
+	Long minAgeDays;
+
+	@Inject
+	@BatchProperty
+	Long maxAgeDays;
+
 
 	/**
 	 * Get the file or list of files to validate
@@ -109,6 +119,9 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 
 	/**
 	 * Verify if a file exists
+	 * 
+	 * @param f
+	 * @return
 	 */
 	private boolean checkExists(File f)  {
 		if (!file.exists()) {
@@ -144,6 +157,12 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 		}
 	}
 
+	/**
+	 * Verify the name of the file
+	 * 
+	 * @param f
+	 * @return 
+	 */
 	private boolean checkName(File f) {
 		if (matchPattern == null) {
 			return true;
@@ -155,6 +174,12 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 		return true;
 	}
 
+	/**
+	 * Verify the date of the file
+	 * 
+	 * @param f
+	 * @return 
+	 */
 	private boolean checkDate(File f) {
 		if (minDate == null && maxDate == null) {
 			return true;
@@ -162,13 +187,37 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 		long modified = f.lastModified();
 
 		if (minDate != null && modified < minDate.getTime()) {
-			logger.log(Level.SEVERE, "File {0} too old", file); 
+			logger.log(Level.SEVERE, "File {0} too old", file);
 			return false;
 		}
 		if (maxDate != null && modified > maxDate.getTime()) {
-			logger.log(Level.SEVERE, "File {0} too new", file); 
+			logger.log(Level.SEVERE, "File {0} too new", file);
 			return false;
 		}
+		return true;
+	}
+
+	/**
+	 * Check age of file
+	 * 
+	 * @param f
+	 * @return 
+	 */
+	private boolean checkAge(File f) {
+		if (minAgeDays == null && maxAgeDays == null) {
+			return true;
+		}
+		long modified = f.lastModified();
+		long now = Date.from(Instant.now()).getTime();
+		
+		if (minAgeDays != null && modified > now - (minAgeDays * 86_400_000)) {
+			logger.log(Level.SEVERE, "File {0} too new", file);
+			return false;
+		}
+		if (maxAgeDays != null && modified < now - (maxAgeDays * 86_400_000)) {
+			logger.log(Level.SEVERE, "File {0} too old", file); 
+			return false;
+		}	
 		return true;
 	}
 
@@ -184,13 +233,7 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 		}
 
 		for (File f: files) {
-			if (!checkSize(f)) {
-				return BatchStatus.FAILED.toString();
-			}
-			if (!checkName(f)) {
-				return BatchStatus.FAILED.toString();
-			}
-			if (!checkDate(f)) {
+			if (!checkExists(f) || !checkSize(f) || !checkName(f) || !checkDate(f) || !checkAge(f)) {
 				return BatchStatus.FAILED.toString();
 			}
 		}
