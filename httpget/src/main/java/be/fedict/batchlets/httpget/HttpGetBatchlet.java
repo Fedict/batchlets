@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package be.fedict.batchlets.http;
+package be.fedict.batchlets.httpget;
 
 import java.io.File;
 import java.io.InputStream;
