@@ -35,7 +35,7 @@ import javax.batch.api.BatchProperty;
 import javax.batch.runtime.BatchStatus;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 /**
  * Sleeps for a number of seconds.
@@ -50,7 +50,7 @@ public class SleepBatchlet extends AbstractBatchlet {
 
 	@Inject
 	@BatchProperty
-	@Min(1)
+	@Positive
 	int delay;
 
 	@Override

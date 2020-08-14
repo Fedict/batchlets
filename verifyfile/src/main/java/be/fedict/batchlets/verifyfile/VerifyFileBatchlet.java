@@ -98,7 +98,6 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 	@BatchProperty
 	Long maxAgeDays;
 
-
 	/**
 	 * Get the file or list of files to validate
 	 * 

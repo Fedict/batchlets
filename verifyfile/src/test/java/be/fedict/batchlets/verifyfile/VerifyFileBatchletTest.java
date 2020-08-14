@@ -28,9 +28,6 @@ package be.fedict.batchlets.verifyfile;
 
 import be.fedict.batchlets.test.BatchletTest;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.Period;
@@ -41,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 import javax.batch.runtime.BatchStatus;
 import org.jberet.runtime.JobExecutionImpl;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;

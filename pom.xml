@@ -12,6 +12,7 @@
 		<module>verifyfile</module>
 		<module>httpget</module>
 		<module>abstractbatchlet</module>
+	 <module>mail</module>
 	</modules>
 	<dependencies>
 		<dependency>
