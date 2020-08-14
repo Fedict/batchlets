@@ -64,6 +64,14 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 
 	@Inject
 	@BatchProperty
+	String matchStart;
+
+	@Inject
+	@BatchProperty
+	String matchEnd;
+
+	@Inject
+	@BatchProperty
 	File directory;
 
 	@Inject
@@ -106,7 +114,8 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 			if (directory == null) {
 				return new File[] { file };
 			}
-			return new File[] { Paths.get(directory.toString(), file.toString()).toFile() };
+			System.err.println("E: " + Paths.get(directory.toString() , file.toString()).toFile().toString());
+			return new File[] { Paths.get(directory.toString() , file.toString()).toFile() };
 		}
 		if (directory != null) {
 			if (filterPattern == null) {
@@ -124,8 +133,8 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 	 * @return
 	 */
 	private boolean checkExists(File f)  {
-		if (!file.exists()) {
-			logger.log(Level.SEVERE, "File {0} does not exist", file);
+		if (!f.exists()) {
+			logger.log(Level.SEVERE, "File {0} does not exist", f.toString());
 			return false;
 		}
 		return true;
@@ -148,7 +157,7 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 				return true;
 			} else {
 				logger.log(Level.SEVERE, "Incorrect file size {0} for {1}", 
-											new String[] { String.valueOf(size), file.toString() });
+											new String[] { String.valueOf(size), file.getAbsolutePath() });
 				return false;
 			}
 		} catch (IOException ioe) {
@@ -211,13 +220,38 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 		long now = Date.from(Instant.now()).getTime();
 		
 		if (minAgeDays != null && modified > now - (minAgeDays * 86_400_000)) {
-			logger.log(Level.SEVERE, "File {0} too new", file);
+			logger.log(Level.SEVERE, "File {0} too new", file.toString());
 			return false;
 		}
 		if (maxAgeDays != null && modified < now - (maxAgeDays * 86_400_000)) {
-			logger.log(Level.SEVERE, "File {0} too old", file); 
+			logger.log(Level.SEVERE, "File {0} too old", file.toString()); 
 			return false;
 		}	
+		return true;
+	}
+
+	/**
+	 * Check if 
+	 * @param f
+	 * @return 
+	 */
+	private boolean checkMatch(File f) {
+		if (matchPattern == null && matchStart == null && matchEnd == null) {
+			return true;
+		}
+		String str = f.getName();
+		if (matchStart != null && !str.startsWith(matchStart)) {
+			logger.log(Level.SEVERE, "File {0} does not start with {1}", new String[] { str, matchStart });
+			return false;
+		}
+		if (matchEnd != null && !str.endsWith(matchEnd)) {
+			logger.log(Level.SEVERE, "File {0} does not end with {1}", new String[] { str, matchEnd });
+			return false;
+		}
+		if (matchPattern != null && !matchPattern.matcher(str).matches()) {
+			logger.log(Level.SEVERE, "File {0} does not match {1}", new String[] { str, matchPattern.toString() });
+			return false;
+		}
 		return true;
 	}
 
@@ -233,7 +267,8 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 		}
 
 		for (File f: files) {
-			if (!checkExists(f) || !checkSize(f) || !checkName(f) || !checkDate(f) || !checkAge(f)) {
+			logger.log(Level.INFO, "Checking {0}", f.toString());
+			if (!checkExists(f) || !checkSize(f) || !checkName(f) || !checkDate(f) || !checkAge(f) || !checkMatch(f)) {
 				return BatchStatus.FAILED.toString();
 			}
 		}

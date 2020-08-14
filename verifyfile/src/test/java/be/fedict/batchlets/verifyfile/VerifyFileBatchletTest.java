@@ -52,11 +52,11 @@ public class VerifyFileBatchletTest extends BatchletTest {
 	public final TemporaryFolder tmp = new TemporaryFolder();
 
 	@Test
-	public void testExist() throws Exception {
-		tmp.newFile("file.txt");
+	public void testExistFile() throws Exception {
+		tmp.newFile("file1.txt");
 	
 		Properties props = new Properties();
-		props.put("file", Paths.get(tmp.getRoot().toString(), "file.txt").toString());
+		props.put("file", Paths.get(tmp.getRoot().toString(), "file1.txt").toString());
 
 		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
 		execution.awaitTermination(4, TimeUnit.SECONDS);
@@ -64,14 +64,114 @@ public class VerifyFileBatchletTest extends BatchletTest {
 	}
 
 	@Test
-	public void testDoesNotExist() throws Exception {
+	public void testExistFileDirectory() throws Exception {
+		tmp.newFile("file2.txt");
+	
 		Properties props = new Properties();
-		props.put("file", "file.txt");
+		props.putAll(Map.of("file", "file2.txt", "directory", tmp.getRoot().toString()));
 
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
+	}
+
+	@Test
+	public void testFileDoesNotExist() throws Exception {
+		Properties props = new Properties();
+		props.put("file", "file3.txt");
+		
 		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
 		execution.awaitTermination(4, TimeUnit.SECONDS);
 
 		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
 	}
+
+	@Test
+	public void testFileMatchStart() throws Exception {
+		tmp.newFile("file4.txt");
 	
+		Properties props = new Properties();
+		props.putAll(Map.of("file", "file4.txt", 
+							"directory", tmp.getRoot().toString(),
+							"matchStart", "file"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
+	}
+
+	@Test
+	public void testFileDoesNotMatchStart() throws Exception {
+		tmp.newFile("file5.txt");
+	
+		Properties props = new Properties();
+		props.putAll(Map.of("file", "file5.txt", 
+							"directory", tmp.getRoot().toString(),
+							"matchStart", "nomatch"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
+	}	
+@Test
+	public void testFileMatchEnd() throws Exception {
+		tmp.newFile("file6.txt");
+	
+		Properties props = new Properties();
+		props.putAll(Map.of("file", "file6.txt", 
+							"directory", tmp.getRoot().toString(),
+							"matchEnd", "txt"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
+	}
+
+	@Test
+	public void testFileDoesNotMatchEnd() throws Exception {
+		tmp.newFile("file7.txt");
+	
+		Properties props = new Properties();
+		props.putAll(Map.of("file", "file7.txt", 
+							"directory", tmp.getRoot().toString(),
+							"matchEnd", "nomatch"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
+	}	
+
+	@Test
+	public void testFileMatches() throws Exception {
+		tmp.newFile("file8.txt");
+	
+		Properties props = new Properties();
+		props.putAll(Map.of("file", "file8.txt", 
+							"directory", tmp.getRoot().toString(),
+							"matchPattern", "^.*txt$"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
+	}
+
+	@Test
+	public void testFileDoesNotMatch() throws Exception {
+		tmp.newFile("file9.txt");
+	
+		Properties props = new Properties();
+		props.putAll(Map.of("file", "file9.txt", 
+							"directory", tmp.getRoot().toString(),
+							"matchPattern", "^nomatch$"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
+	}	
 }
