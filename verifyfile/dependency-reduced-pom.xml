@@ -6,9 +6,9 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>be.fedict.batchlets</groupId>
-  <artifactId>sleep</artifactId>
-  <name>Sleep Batchlet</name>
+  <groupId>be.fedict.batchelets</groupId>
+  <artifactId>verifyfile</artifactId>
+  <name>VerifyFile Batchlet</name>
   <build>
     <plugins>
       <plugin>
@@ -17,7 +17,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Main-Class>be.fedict.batchlets.SleepBatchlet</Main-Class>
+              <Main-Class>be.fedict.batchlets.HttpGetBatchlet</Main-Class>
             </manifestEntries>
           </archive>
         </configuration>
@@ -36,7 +36,7 @@
         <configuration>
           <transformers>
             <transformer>
-              <mainClass>be.fedict.batchlets.SleepBatchlet</mainClass>
+              <mainClass>be.fedict.batchlets.HttpGetBatchlet</mainClass>
             </transformer>
           </transformers>
         </configuration>

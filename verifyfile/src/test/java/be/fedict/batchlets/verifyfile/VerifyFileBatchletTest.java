@@ -27,10 +27,14 @@
 package be.fedict.batchlets.verifyfile;
 
 import be.fedict.batchlets.test.BatchletTest;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.Period;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -173,5 +177,145 @@ public class VerifyFileBatchletTest extends BatchletTest {
 		execution.awaitTermination(4, TimeUnit.SECONDS);
 
 		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
-	}	
+	}
+
+	@Test
+	public void testAllFilesMatch() throws Exception {
+		tmp.newFile("file10a.txt");
+		tmp.newFile("file10b.txt");
+
+		Properties props = new Properties();
+		props.putAll(Map.of("directory", tmp.getRoot().toString(),
+							"matchPattern", "^.*txt"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
+	}
+
+	@Test
+	public void testSomeFilesDoNotMatch() throws Exception {
+		tmp.newFile("file11a.txt");
+		tmp.newFile("file11b.zip");
+
+		Properties props = new Properties();
+		props.putAll(Map.of("directory", tmp.getRoot().toString(),
+							"matchPattern", "^.*txt"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
+	}
+	
+	@Test
+	public void testFilesMatchFiltered() throws Exception {
+		tmp.newFile("file12a.txt");
+		tmp.newFile("file12b.zip");
+
+		Properties props = new Properties();
+		props.putAll(Map.of("directory", tmp.getRoot().toString(),
+							"filterPattern", ".*txt$",
+							"matchPattern", "file12a.*"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
+	}
+	
+	@Test
+	public void testFilesDoNotMatchFiltered() throws Exception {
+		tmp.newFile("file13a.txt");
+		tmp.newFile("file13b.zip");
+
+		Properties props = new Properties();
+		props.putAll(Map.of("directory", tmp.getRoot().toString(),
+							"filterPattern", ".*txt$",
+							"matchPattern", "nomatch*"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
+	}
+	
+	@Test
+	public void testFilesAllModifiedOk() throws Exception {
+		File f14a = tmp.newFile("file14a.txt");
+		File f14b = tmp.newFile("file14b.zip");
+
+		Date old = Date.from(Instant.parse("2001-01-01T23:00:00.00Z"));
+		f14a.setLastModified(old.getTime());
+		f14b.setLastModified(old.getTime());
+		
+		Properties props = new Properties();
+		props.putAll(Map.of("directory", tmp.getRoot().toString(),
+							"minDate", "31/12/2000",
+							"maxDate", "31/12/2001"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
+	}
+	
+	@Test
+	public void testFilesSomeModifiedNotOk() throws Exception {
+		File f15a = tmp.newFile("file15a.txt");
+		File f15b = tmp.newFile("file15b.zip");
+
+		Date old = Date.from(Instant.parse("2001-01-01T23:00:00.00Z"));
+		f15a.setLastModified(old.getTime());
+		
+		Properties props = new Properties();
+		props.putAll(Map.of("directory", tmp.getRoot().toString(),
+							"minDate", "31/12/2000",
+							"maxDate", "31/12/2001"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
+	}
+
+	@Test
+	public void testFilesAllAgeOk() throws Exception {
+		File f16a = tmp.newFile("file16a.txt");
+		File f16b = tmp.newFile("file16b.zip");
+
+		Date old = Date.from(Instant.now().minus(Period.ofDays(60)));
+		f16a.setLastModified(old.getTime());
+		f16b.setLastModified(old.getTime());
+		
+		Properties props = new Properties();
+		props.putAll(Map.of("directory", tmp.getRoot().toString(),
+							"minAgeDays", "0",
+							"maxAgeDays", "120"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
+	}
+
+	@Test
+	public void testFilesSomeAgeNotOk() throws Exception {
+		File f17a = tmp.newFile("file17a.txt");
+		File f17b = tmp.newFile("file17b.zip");
+
+		Date old = Date.from(Instant.now().minus(Period.ofDays(150)));
+		f17a.setLastModified(old.getTime());
+		
+		Properties props = new Properties();
+		props.putAll(Map.of("directory", tmp.getRoot().toString(),
+							"minAgeDays", "0",
+							"maxAgeDays", "120"));
+
+		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
+		execution.awaitTermination(4, TimeUnit.SECONDS);
+
+		assertEquals(BatchStatus.FAILED, execution.getBatchStatus());
+	}
 }

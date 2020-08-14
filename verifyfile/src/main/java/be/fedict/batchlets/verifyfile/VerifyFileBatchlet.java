@@ -114,7 +114,6 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 			if (directory == null) {
 				return new File[] { file };
 			}
-			System.err.println("E: " + Paths.get(directory.toString() , file.toString()).toFile().toString());
 			return new File[] { Paths.get(directory.toString() , file.toString()).toFile() };
 		}
 		if (directory != null) {
@@ -167,23 +166,6 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 	}
 
 	/**
-	 * Verify the name of the file
-	 * 
-	 * @param f
-	 * @return 
-	 */
-	private boolean checkName(File f) {
-		if (matchPattern == null) {
-			return true;
-		}
-		if (!matchPattern.matcher(f.toString()).matches()) {
-			logger.log(Level.SEVERE, "No match for {0}", file); 
-			return false;
-		}
-		return true;
-	}
-
-	/**
 	 * Verify the date of the file
 	 * 
 	 * @param f
@@ -231,7 +213,8 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 	}
 
 	/**
-	 * Check if 
+	 * Verify the file name part of a file
+	 * 
 	 * @param f
 	 * @return 
 	 */
@@ -268,7 +251,7 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 
 		for (File f: files) {
 			logger.log(Level.INFO, "Checking {0}", f.toString());
-			if (!checkExists(f) || !checkSize(f) || !checkName(f) || !checkDate(f) || !checkAge(f) || !checkMatch(f)) {
+			if (!checkExists(f) || !checkSize(f) || !checkDate(f) || !checkAge(f) || !checkMatch(f)) {
 				return BatchStatus.FAILED.toString();
 			}
 		}
