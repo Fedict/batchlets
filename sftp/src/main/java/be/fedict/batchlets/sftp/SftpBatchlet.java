@@ -145,7 +145,7 @@ public class SftpBatchlet extends AbstractBatchlet {
 	 * @throws SftpException 
 	 */
 	private boolean download() throws JSchException, SftpException {
-		logger.log(Level.INFO, "Download from server {0}", fromSite);
+		logger.log(Level.INFO, "Download {0} from server {1}", new String[] { fromFile, fromSite });
 			
 		if (fromUser == null || fromPass == null) {
 			logger.severe("User or password is empty");

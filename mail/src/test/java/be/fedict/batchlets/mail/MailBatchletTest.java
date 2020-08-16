@@ -25,16 +25,8 @@
  */
 package be.fedict.batchlets.sftp;
 
-import be.fedict.batchlets.test.BatchletTest;
-import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -42,28 +34,16 @@ import javax.batch.runtime.BatchStatus;
 import org.jberet.runtime.JobExecutionImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 /**
  *
  * @author Bart.Hanssens
  */
 
-public class SftpBatchletTest extends BatchletTest {
-	@Rule
-	public final FakeSftpServerRule server = new FakeSftpServerRule().setPort(1234).addUser("joe", "pass");
-
-	@Rule
-	public final TemporaryFolder tmp = new TemporaryFolder();
-
+public class MailBatchletTest extends BatchletTest {
 	@Test
-	public void testDownload() throws Exception {
-		server.putFile("/dir/file.txt", "dummy", StandardCharsets.UTF_8);
-
-		Path file = Paths.get(tmp.getRoot().toString(), "file.txt");
-
+	public void testMail() throws Exception {
 		Properties props = new Properties();
 		props.putAll(Map.of("fromSite", "localhost",
 							"fromPort", "1234",
@@ -73,33 +53,16 @@ public class SftpBatchletTest extends BatchletTest {
 							"insecure", "true",
 							"toFile", file.toString()));
 
-		JobExecutionImpl execution = startBatchletJob("sftpBatchlet", props);
+		JobExecutionImpl execution = t
 		execution.awaitTermination(10, TimeUnit.SECONDS);
 
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
 		assertTrue(file + " does not exist", Files.exists(file));
 	}
 	
-	@Test
-	public void testUpload() throws Exception {
-		File file = tmp.newFile("file.txt");
-		try (OutputStream os = Files.newOutputStream(file.toPath())) {
-			os.write("dummy".getBytes(StandardCharsets.UTF_8));
-		}
+	
+	public void upload() throws Exception {
+		server.putFile("/dir/file.txt", "dummy", StandardCharsets.UTF_8);
 		
-		Properties props = new Properties();
-		props.putAll(Map.of("toSite", "localhost",
-							"toPort", "1234",
-							"fromFile", file.toString(),
-							"toUser", "joe",
-							"toPass", "pass",
-							"insecure", "true",
-							"toFile", "/dir/file.txt"));
-
-		JobExecutionImpl execution = startBatchletJob("sftpBatchlet", props);
-		execution.awaitTermination(10, TimeUnit.SECONDS);
-
-		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
-		assertTrue(file + " does not exist", server.existsFile("/dir/file.txt"));		
 	}
 }
