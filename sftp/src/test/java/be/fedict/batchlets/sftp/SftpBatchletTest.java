@@ -35,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -60,14 +61,14 @@ public class SftpBatchletTest extends BatchletTest {
 
 	@Test
 	public void testDownload() throws Exception {
-		server.putFile("/dir/file.txt", "dummy", StandardCharsets.UTF_8);
+		server.putFile("/file.txt", "dummy", StandardCharsets.UTF_8);
 
 		Path file = Paths.get(tmp.getRoot().toString(), "file.txt");
 
 		Properties props = new Properties();
 		props.putAll(Map.of("fromSite", "localhost",
 							"fromPort", "1234",
-							"fromFile", "/dir/file.txt",
+							"fromFile", "/file.txt",
 							"fromUser", "joe",
 							"fromPass", "pass",
 							"insecure", "true",
@@ -83,23 +84,23 @@ public class SftpBatchletTest extends BatchletTest {
 	@Test
 	public void testUpload() throws Exception {
 		File file = tmp.newFile("file.txt");
-		try (OutputStream os = Files.newOutputStream(file.toPath())) {
+		try (OutputStream os = Files.newOutputStream(file.toPath(), StandardOpenOption.CREATE)) {
 			os.write("dummy".getBytes(StandardCharsets.UTF_8));
 		}
-		
+
 		Properties props = new Properties();
 		props.putAll(Map.of("toSite", "localhost",
 							"toPort", "1234",
-							"fromFile", file.toString(),
+							"toFile", "/file.txt",
 							"toUser", "joe",
 							"toPass", "pass",
 							"insecure", "true",
-							"toFile", "/dir/file.txt"));
+							"fromFile", file.toString()));
 
 		JobExecutionImpl execution = startBatchletJob("sftpBatchlet", props);
 		execution.awaitTermination(10, TimeUnit.SECONDS);
 
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
-		assertTrue(file + " does not exist", server.existsFile("/dir/file.txt"));		
+		assertTrue("File.txt does not exist", server.existsFile("/file.txt"));		
 	}
 }

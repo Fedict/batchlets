@@ -30,6 +30,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.batch.api.AbstractBatchlet;
@@ -37,7 +38,6 @@ import javax.batch.api.BatchProperty;
 import javax.batch.runtime.BatchStatus;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -62,8 +62,7 @@ public class SftpBatchlet extends AbstractBatchlet {
 	@Inject 
 	@BatchProperty
 	@NotNull
-	@NotBlank
-	String fromFile;
+	File fromFile;
 
 	@Inject 
 	@BatchProperty
@@ -85,8 +84,7 @@ public class SftpBatchlet extends AbstractBatchlet {
 	@Inject 
 	@BatchProperty
 	@NotNull
-	@NotBlank
-	String toFile;
+	File toFile;
 
 	@Inject 
 	@BatchProperty
@@ -145,7 +143,7 @@ public class SftpBatchlet extends AbstractBatchlet {
 	 * @throws SftpException 
 	 */
 	private boolean download() throws JSchException, SftpException {
-		logger.log(Level.INFO, "Download {0} from server {1}", new String[] { fromFile, fromSite });
+		logger.log(Level.INFO, "Download {0} from server {1}", new String[] { fromFile.toString(), fromSite });
 			
 		if (fromUser == null || fromPass == null) {
 			logger.severe("User or password is empty");
@@ -155,16 +153,11 @@ public class SftpBatchlet extends AbstractBatchlet {
 
 		ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
 		channel.connect();
-		channel.get(fromFile, toFile);
+		channel.get(fromFile.toString(), toFile.toString());
 		channel.disconnect();
-		int status = channel.getExitStatus();
 
 		session.disconnect();
-			
-		if (status != 0) {
-			logger.log(Level.SEVERE, "Exit status {0}", status);
-			return false;
-		}
+
 		return true;
 	}
 
@@ -176,27 +169,25 @@ public class SftpBatchlet extends AbstractBatchlet {
 	 * @throws SftpException 
 	 */
 	private boolean upload() throws JSchException, SftpException {
-		logger.log(Level.INFO, "Upload to server {0}", toSite);
+		logger.log(Level.INFO, "Upload {0} to server {1}", new String[] { fromFile.toString(), toSite });
 
 		if (toUser == null || toPass == null) {
 			logger.severe("User or password is empty");
 			return false;
 		}
-
+		if (!fromFile.exists()) {
+			logger.severe("File to upload not found");
+			return false;
+		}
 		openSession(toSite, toPort, toUser, toPass);
 
 		ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
 		channel.connect();
-		channel.put(fromFile, toFile);
+		channel.put(fromFile.toString(), toFile.toString());
 		channel.disconnect();
-		int status = channel.getExitStatus();
 
 		session.disconnect();
 
-		if (status != 0) {
-			logger.log(Level.SEVERE, "Exit status {0}", status);
-			return false;
-		}
 		return true;
 	}
 
