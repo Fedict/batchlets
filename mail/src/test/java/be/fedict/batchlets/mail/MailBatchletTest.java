@@ -25,44 +25,49 @@
  */
 package be.fedict.batchlets.sftp;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import be.fedict.batchlets.test.BatchletTest;
+import com.icegreen.greenmail.junit4.GreenMailRule;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import javax.batch.runtime.BatchStatus;
+import javax.mail.Message;
+import javax.mail.internet.MimeMessage;
 import org.jberet.runtime.JobExecutionImpl;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
  *
- * @author Bart.Hanssens
+ * @author Bart Hanssens
  */
 
 public class MailBatchletTest extends BatchletTest {
+	@Rule
+	public GreenMailRule smtpServer = new GreenMailRule(ServerSetupTest.SMTP);
+
 	@Test
 	public void testMail() throws Exception {
 		Properties props = new Properties();
-		props.putAll(Map.of("fromSite", "localhost",
-							"fromPort", "1234",
-							"fromFile", "/dir/file.txt",
-							"fromUser", "joe",
-							"fromPass", "pass",
-							"insecure", "true",
-							"toFile", file.toString()));
+		props.putAll(Map.of("server", "localhost",
+							"port", "3025",
+							"from", "test@example.com",
+							"to", "recipient@example.com",
+							"message", "hello",
+							"subject", "OK"));
 
-		JobExecutionImpl execution = t
+		JobExecutionImpl execution = startBatchletJob("mailBatchlet", props);
 		execution.awaitTermination(10, TimeUnit.SECONDS);
 
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
-		assertTrue(file + " does not exist", Files.exists(file));
-	}
-	
-	
-	public void upload() throws Exception {
-		server.putFile("/dir/file.txt", "dummy", StandardCharsets.UTF_8);
+		
+		MimeMessage[] msgs = smtpServer.getReceivedMessagesForDomain("example.com");
+		assertEquals(1, msgs.length);
+		assertEquals("OK", msgs[0].getSubject());
+		assertEquals("test@example.com", msgs[0].getSender().toString());
+		assertEquals("recipient@example.com", msgs[0].getRecipients(Message.RecipientType.TO)[0].toString());
 		
 	}
 }

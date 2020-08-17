@@ -71,5 +71,11 @@
             <artifactId>jakarta.mail-api</artifactId>
             <version>1.6.5</version>
         </dependency>
+		<dependency>
+			<groupId>com.icegreen</groupId>
+			<artifactId>greenmail-junit4</artifactId>
+			<version>1.6.0</version>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
 </project>

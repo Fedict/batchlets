@@ -23,12 +23,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package be.fedict.batchlets.sleep;
+package be.fedict.batchlets.mail;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.batch.api.AbstractBatchlet;
@@ -60,14 +58,14 @@ public class MailBatchlet extends AbstractBatchlet {
 	@Email
 	@NotNull
 	@NotBlank
-	String mailFrom;
+	String from;
 	
 	@Inject 
 	@BatchProperty
 	@Email
 	@NotNull
 	@NotBlank
-	String mailTo;
+	String to;
 	
 	@Inject 
 	@BatchProperty
@@ -77,6 +75,7 @@ public class MailBatchlet extends AbstractBatchlet {
 
 	@Inject 
 	@BatchProperty
+	@NotNull
 	String message;
 		
 	@Inject 
@@ -92,7 +91,7 @@ public class MailBatchlet extends AbstractBatchlet {
 	
 	@Override
 	public String process() throws Exception {
-		logger.log(Level.INFO, "Mailing {0} to {1}", new String[] { subject, mailTo });
+		logger.log(Level.INFO, "Mailing {0} to {1}", new String[] { subject, to });
 			
 		Properties props = new Properties();
 		props.put("mail.smtp.host", server);
@@ -103,8 +102,8 @@ public class MailBatchlet extends AbstractBatchlet {
 		Session session = Session.getInstance(props);
 		try {			
 			MimeMessage msg = new MimeMessage(session);
-			msg.setFrom(mailFrom);
-			msg.setRecipients(Message.RecipientType.TO, mailTo);
+			msg.setFrom(from);
+			msg.setRecipients(Message.RecipientType.TO, to);
 			msg.setSubject(subject);
 			msg.setText(message, StandardCharsets.UTF_8.toString());
 			
