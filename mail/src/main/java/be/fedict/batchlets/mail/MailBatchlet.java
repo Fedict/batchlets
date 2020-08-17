@@ -106,7 +106,7 @@ public class MailBatchlet extends AbstractBatchlet {
 			msg.setRecipients(Message.RecipientType.TO, to);
 			msg.setSubject(subject);
 			msg.setText(message, StandardCharsets.UTF_8.toString());
-			
+
 			Transport.send(msg);
 		} catch (MessagingException ex) {
 			logger.log(Level.SEVERE, ex.getMessage());

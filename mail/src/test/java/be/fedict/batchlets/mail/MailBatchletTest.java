@@ -46,7 +46,7 @@ import org.junit.Test;
 
 public class MailBatchletTest extends BatchletTest {
 	@Rule
-	public GreenMailRule smtpServer = new GreenMailRule(ServerSetupTest.SMTP);
+	public GreenMailRule smtpServer = new GreenMailRule(ServerSetupTest.SMTP_POP3);
 
 	@Test
 	public void testMail() throws Exception {
@@ -63,11 +63,11 @@ public class MailBatchletTest extends BatchletTest {
 
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
 		
-		MimeMessage[] msgs = smtpServer.getReceivedMessagesForDomain("example.com");
+		MimeMessage[] msgs = smtpServer.getReceivedMessages();
 		assertEquals(1, msgs.length);
 		assertEquals("OK", msgs[0].getSubject());
-		assertEquals("test@example.com", msgs[0].getSender().toString());
 		assertEquals("recipient@example.com", msgs[0].getRecipients(Message.RecipientType.TO)[0].toString());
-		
+		assertEquals("test@example.com", msgs[0].getFrom()[0].toString());
+
 	}
 }
