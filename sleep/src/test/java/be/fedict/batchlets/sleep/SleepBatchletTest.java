@@ -43,7 +43,7 @@ public class SleepBatchletTest extends BatchletTest {
 	@Test
 	public void testSleepOK() throws Exception {
 		Properties prop = new Properties();
-		prop.put("delay", "4");
+		prop.put("seconds", "4");
 		JobExecutionImpl execution = startBatchletJob("sleepBatchlet", prop);
 		execution.awaitTermination(5, TimeUnit.SECONDS);
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
@@ -52,7 +52,7 @@ public class SleepBatchletTest extends BatchletTest {
 	@Test
 	public void testSleepLonger() throws Exception {
 		Properties prop = new Properties();
-		prop.put("delay", "4");
+		prop.put("seconds", "4");
 		JobExecutionImpl execution = startBatchletJob("sleepBatchlet", prop);
 		execution.awaitTermination(2, TimeUnit.SECONDS);
 		assertEquals(BatchStatus.STARTED, execution.getBatchStatus());

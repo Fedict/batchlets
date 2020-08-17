@@ -80,8 +80,6 @@ public class MailBatchlet extends AbstractBatchlet {
 		
 	@Inject 
 	@BatchProperty
-	@NotNull
-	@NotBlank
 	String server;
 	
 	@Inject 
@@ -94,7 +92,7 @@ public class MailBatchlet extends AbstractBatchlet {
 		logger.log(Level.INFO, "Mailing {0} to {1}", new String[] { subject, to });
 			
 		Properties props = new Properties();
-		props.put("mail.smtp.host", server);
+		props.put("mail.smtp.host", (server != null) ? server : "localhost" );
 		if (port != null) {
 			props.put("mail.smtp.port", port);
 		}

@@ -51,13 +51,13 @@ public class SleepBatchlet extends AbstractBatchlet {
 	@Inject
 	@BatchProperty
 	@Positive
-	int delay;
+	int seconds;
 
 	@Override
 	public String process() throws Exception {
-		logger.log(Level.INFO, "Sleeping for {0} seconds", delay);
+		logger.log(Level.INFO, "Sleeping for {0} seconds", seconds);
 		scheduler = Executors.newSingleThreadScheduledExecutor();
-		scheduler.awaitTermination(delay, TimeUnit.SECONDS);
+		scheduler.awaitTermination(seconds, TimeUnit.SECONDS);
 		scheduler.shutdown();
 		return BatchStatus.COMPLETED.toString();
 	}
