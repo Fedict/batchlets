@@ -60,7 +60,6 @@ Unpack an archive file (e.g. a ZIP)
 
 Verifies names, date and size of (a series of) files
 
-
 | Parameter     | Required | Default   |
 |---------------|----------|-----------|
 | file	        |          |           |
