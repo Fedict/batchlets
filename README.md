@@ -28,16 +28,16 @@ Download or upload a file using SFTP
 | Parameter | Required | Default   |
 |-----------|----------|-----------|
 | fromFile  |          |           |
-| fromSite  |          |           |
+| fromSite  | no       | 22        |
 | fromPort  |          |           |
 | fromUser  |          |           |
 | fromPass  |          |           |
 | toFile    |          |           |
 | toSite    |          |           |
-| toPort    |          |           |
+| toPort    | no       | 22        |
 | toUser    |          |           |
 | toPass    |          |           |
-| insecure  |          |           |
+| insecure  | no       | false     |
 
 ## SleepBatchlet
 
@@ -56,3 +56,22 @@ Unpack an archive file (e.g. a ZIP)
 | inputFile | yes      |           |
 | outputDir | yes      |           |
 
+## VerifyFileBatchlet
+
+Verifies names, date and size of (a series of) files
+
+
+| Parameter     | Required | Default   |
+|---------------|----------|-----------|
+| file	        |          |           |
+| directory     |          |           |
+| filterPattern | no       |           |
+| matchStart    | no       | *         |
+| matchEnd      | no       | *         |
+| matchPattern  | no       | ^.*$      |
+| minSize       | no       | 0         |
+| maxSize       | no       | infinite  |
+| minDate       | no       | 0         |
+| maxDate       | no       |           |
+| minAgeDays    | no       | 0         |
+| maxAgeDays    | no       |           | 
