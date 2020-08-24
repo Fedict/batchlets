@@ -6,7 +6,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>be.fedict.batchelets</groupId>
+  <groupId>be.fedict.batchlets</groupId>
   <artifactId>verifyfile</artifactId>
   <name>VerifyFile Batchlet</name>
   <build>
