@@ -66,8 +66,8 @@ public class HttpGetBatchlet extends AbstractBatchlet {
 	public String process() throws Exception {
 		logger.log(Level.INFO, "Getting from {0}", fromURL.toString());
 		try(InputStream is = fromURL.openStream();
-			OutputStream os = Files.newOutputStream(toFile.toPath(), StandardOpenOption.TRUNCATE_EXISTING, 
-																		StandardOpenOption.WRITE ) ) {
+			OutputStream os = Files.newOutputStream(toFile.toPath(), 
+				StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE ) ) {
 			is.transferTo(os);
 		}
 		return BatchStatus.COMPLETED.toString();

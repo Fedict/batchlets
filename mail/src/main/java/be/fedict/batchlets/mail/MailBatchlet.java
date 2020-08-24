@@ -60,7 +60,7 @@ public class MailBatchlet extends AbstractBatchlet {
 	@NotBlank
 	String from;
 	
-	@Inject 
+	@Inject
 	@BatchProperty
 	@Email
 	@NotNull
@@ -76,10 +76,12 @@ public class MailBatchlet extends AbstractBatchlet {
 	@Inject 
 	@BatchProperty
 	@NotNull
+	@NotBlank
 	String message;
 		
 	@Inject 
 	@BatchProperty
+	@NotBlank
 	String server;
 	
 	@Inject 
