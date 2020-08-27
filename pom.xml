@@ -13,6 +13,7 @@
 		<module>httpget</module>
 		<module>abstractbatchlet</module>
 		<module>mail</module>
+	 <module>logmaillistener</module>
 	</modules>
 	<dependencies>
 		<dependency>
