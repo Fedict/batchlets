@@ -3,5 +3,5 @@
 <batch-artifacts xmlns="http://xmlns.jcp.org/xml/ns/javaee"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/batchXML_1_0.xsd">
-    <ref id="httpGetBatchlet" class="be.fedict.batchlets.httpget.HttpGetBatchlet" />
+    <ref id="httpGetBatchlet" class="be.fedict.batch.batchlets.httpget.HttpGetBatchlet" />
 </batch-artifacts>

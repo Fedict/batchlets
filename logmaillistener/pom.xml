@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>be.fedict</groupId>
-        <artifactId>batchlets</artifactId>
+        <artifactId>batch</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>be.fedict.batchlets</groupId>
-    <artifactId>logmaillistener</artifactId>
+    <artifactId>joblistener-logmail</artifactId>
     <packaging>jar</packaging>
     <name>LogMail Listener</name>
     <description>Joblistener which mails log file</description>

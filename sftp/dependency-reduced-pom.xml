@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>batchlets</artifactId>
+    <artifactId>batch</artifactId>
     <groupId>be.fedict</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>be.fedict.batchlets</groupId>
-  <artifactId>sftp</artifactId>
+  <groupId>be.fedict.batch</groupId>
+  <artifactId>batchlets-sftp</artifactId>
   <name>SFTP Batchlet</name>
   <build>
     <plugins>
@@ -17,7 +17,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Main-Class>be.fedict.batchlets.SleepBatchlet</Main-Class>
+              <Main-Class>be.fedict.batch.batchlets.SftpBatchlet</Main-Class>
             </manifestEntries>
           </archive>
         </configuration>
@@ -36,7 +36,7 @@
         <configuration>
           <transformers>
             <transformer>
-              <mainClass>be.fedict.batchlets.SleepBatchlet</mainClass>
+              <mainClass>be.fedict.batch.batchlets.SftpBatchlet</mainClass>
             </transformer>
           </transformers>
         </configuration>
@@ -68,8 +68,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>be.fedict.batchlets</groupId>
-      <artifactId>test</artifactId>
+      <groupId>be.fedict.batch</groupId>
+      <artifactId>batchlets-test</artifactId>
       <version>1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>

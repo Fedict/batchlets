@@ -3,5 +3,5 @@
 <batch-artifacts xmlns="http://xmlns.jcp.org/xml/ns/javaee"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/batchXML_1_0.xsd">
-    <ref id="sftpBatchlet" class="be.fedict.batchlets.sftp.SftpBatchlet" />
+    <ref id="sftpBatchlet" class="be.fedict.batch.batchlets.sftp.SftpBatchlet" />
 </batch-artifacts>
