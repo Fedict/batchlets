@@ -6,7 +6,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>be.fedict.batchlets</groupId>
+  <groupId>be.fedict.batch</groupId>
   <artifactId>batchlets-unpack</artifactId>
   <name>Unpack Batchlet</name>
   <build>
