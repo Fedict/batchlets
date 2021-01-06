@@ -62,7 +62,7 @@ public class MailBatchletTest extends BatchletTest {
 		execution.awaitTermination(10, TimeUnit.SECONDS);
 
 		assertEquals(BatchStatus.COMPLETED, execution.getBatchStatus());
-		
+	
 		MimeMessage[] msgs = smtpServer.getReceivedMessages();
 		assertEquals(1, msgs.length);
 		assertEquals("OK", msgs[0].getSubject());

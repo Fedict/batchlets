@@ -36,7 +36,7 @@
         <configuration>
           <transformers>
             <transformer>
-              <mainClass>be.fedict.batch.batchlets.SleepBatchlet</mainClass>
+              <mainClass>be.fedict.batchlets.SleepBatchlet</mainClass>
             </transformer>
           </transformers>
         </configuration>
@@ -56,40 +56,6 @@
       <artifactId>batchlets-test</artifactId>
       <version>1.0-SNAPSHOT</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jberet</groupId>
-      <artifactId>jberet-core</artifactId>
-      <version>1.3.7.Final</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jberet</groupId>
-      <artifactId>jberet-support</artifactId>
-      <version>1.3.4.Final</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jberet</groupId>
-      <artifactId>jberet-se</artifactId>
-      <version>1.3.4.Final</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>2.0</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>javax.el-api</artifactId>
-          <groupId>javax.el</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>javax.interceptor-api</artifactId>
-          <groupId>javax.interceptor</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

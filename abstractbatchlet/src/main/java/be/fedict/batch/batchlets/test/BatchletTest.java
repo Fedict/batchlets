@@ -26,20 +26,26 @@
 package be.fedict.batch.batchlets.test;
 
 import java.util.Properties;
+import javax.batch.operations.JobOperator;
+import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.BatchStatus;
+
 import org.jberet.job.model.Job;
 import org.jberet.job.model.JobBuilder;
 import org.jberet.job.model.StepBuilder;
 import org.jberet.operations.JobOperatorImpl;
 import org.jberet.runtime.JobExecutionImpl;
 import org.jberet.spi.JobOperatorContext;
+import org.junit.Before;
 
 /**
  *
  * @author Bart.Hanssens
  */
-public class BatchletTest {
-	
+public abstract class BatchletTest {
+    private static final JobOperatorImpl operator = (JobOperatorImpl) 
+												JobOperatorContext.getJobOperatorContext().getJobOperator();
+
 	/**
 	 * Define a batchlet job and start with specific set of properties
 	 * 
@@ -47,7 +53,7 @@ public class BatchletTest {
 	 * @param props
 	 * @return 
 	 */
-	protected JobExecutionImpl startBatchletJob(String batchlet, Properties props) {
+	protected JobExecutionImpl startBatchletJob(String batchlet, Properties props) throws InterruptedException {
 		Job job = new JobBuilder("job")
 					.restartable(false)
 					.step(new StepBuilder("step")
@@ -56,8 +62,7 @@ public class BatchletTest {
 						.build())
 					.build();
 
-		JobOperatorImpl operator = (JobOperatorImpl) JobOperatorContext.getJobOperatorContext().getJobOperator();
-		long id = operator.start(job, new Properties());
+		long id = operator.start(job, null);
 		return (JobExecutionImpl) operator.getJobExecution(id);
 	}
 }
