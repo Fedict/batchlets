@@ -25,7 +25,6 @@
  */
 package be.fedict.batch.batchlets.sleep;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -56,9 +55,7 @@ public class SleepBatchlet extends AbstractBatchlet {
 	@Override
 	public String process() throws Exception {
 		logger.log(Level.INFO, "Sleeping for {0} seconds", seconds);
-		scheduler = Executors.newSingleThreadScheduledExecutor();
-		scheduler.awaitTermination(seconds, TimeUnit.SECONDS);
-		scheduler.shutdown();
+		TimeUnit.SECONDS.sleep(seconds);
 		return BatchStatus.COMPLETED.toString();
 	}
 	

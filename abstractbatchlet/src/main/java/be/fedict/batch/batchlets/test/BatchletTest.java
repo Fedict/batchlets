@@ -26,8 +26,6 @@
 package be.fedict.batch.batchlets.test;
 
 import java.util.Properties;
-import javax.batch.operations.JobOperator;
-import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.BatchStatus;
 
 import org.jberet.job.model.Job;
@@ -36,7 +34,6 @@ import org.jberet.job.model.StepBuilder;
 import org.jberet.operations.JobOperatorImpl;
 import org.jberet.runtime.JobExecutionImpl;
 import org.jberet.spi.JobOperatorContext;
-import org.junit.Before;
 
 /**
  *
