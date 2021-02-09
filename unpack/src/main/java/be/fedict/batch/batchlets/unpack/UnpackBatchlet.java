@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Bart Hanssens <bart.hanssens@bosa.fgov.be>
+ * Copyright (c) 2020, FPS BOSA DG DT
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ import org.apache.commons.compress.utils.IOUtils;
 /**
  * Unpack a ZIP (or other compressed file)
  * 
- * @author Bart Hanssens
+ * @author Bart Hanssens <bart.hanssens@bosa.fgov.be>
  */
 @Named
 public class UnpackBatchlet extends AbstractBatchlet {

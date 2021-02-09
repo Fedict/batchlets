@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Bart Hanssens <bart.hanssens@bosa.fgov.be>
+ * Copyright (c) 2020, FPS BOSA DG DT
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ import javax.validation.constraints.NotNull;
 /**
  * Download or upload a file via SFTP (not both)
  * 
- * @author Bart Hanssens
+ * @author Bart Hanssens <bart.hanssens@bosa.fgov.be>
  */
 @Named
 public class HttpGetBatchlet extends AbstractBatchlet {
