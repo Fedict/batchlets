@@ -245,10 +245,10 @@ public class VerifyFileBatchletTest extends BatchletTest {
 		Date old = Date.from(Instant.parse("2001-01-01T23:00:00.00Z"));
 		f14a.setLastModified(old.getTime());
 		f14b.setLastModified(old.getTime());
-		
+
 		Properties props = new Properties();
 		props.putAll(Map.of("directory", tmp.getRoot().toString(),
-							"minDate", "31/12/2000",
+							"minDate",  "31/12/2000",
 							"maxDate", "31/12/2001"));
 
 		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);
@@ -264,10 +264,12 @@ public class VerifyFileBatchletTest extends BatchletTest {
 
 		Date old = Date.from(Instant.parse("2001-01-01T23:00:00.00Z"));
 		f15a.setLastModified(old.getTime());
-		
+		Date toonew = Date.from(Instant.parse("2020-01-01T23:00:00.00Z"));
+		f15b.setLastModified(toonew.getTime());
+
 		Properties props = new Properties();
 		props.putAll(Map.of("directory", tmp.getRoot().toString(),
-							"minDate", "31/12/2000",
+							"minDate",  "31/12/2000",
 							"maxDate", "31/12/2001"));
 
 		JobExecutionImpl execution = startBatchletJob("verifyFileBatchlet", props);

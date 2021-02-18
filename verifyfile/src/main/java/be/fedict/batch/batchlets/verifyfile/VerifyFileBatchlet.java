@@ -132,7 +132,7 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 	 */
 	private boolean checkExists(File f)  {
 		if (!f.exists()) {
-			logger.log(Level.SEVERE, "File {0} does not exist", f.toString());
+			logger.log(Level.SEVERE, "File {0} does not exist", f);
 			return false;
 		}
 		return true;
@@ -149,19 +149,25 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 			return true;
 		}
 
+		long size;		
 		try {
-			long size = Files.size(f.toPath());
-			if ((minSize == null || size >= minSize) && (maxSize == null || size <= maxSize)) {
-				return true;
-			} else {
-				logger.log(Level.SEVERE, "Incorrect file size {0} for {1}", 
-											new String[] { String.valueOf(size), file.getAbsolutePath() });
-				return false;
-			}
+			size = Files.size(f.toPath());
 		} catch (IOException ioe) {
-			logger.log(Level.SEVERE, "Error getting filesize for {0}", file);
+			logger.log(Level.SEVERE, "Error getting filesize for {0}", f);
 			return false;
 		}
+		
+		if (minSize != null || size < minSize) {
+			logger.log(Level.SEVERE, "File size {0} too small for {1}", 
+											new String[] { String.valueOf(size), f.getAbsolutePath() });
+			return false;
+		}
+		if (maxSize == null || size > maxSize) {
+			logger.log(Level.SEVERE, "File size {0} too big for {1}", 
+											new String[] { String.valueOf(size), f.getAbsolutePath() });
+			return false;
+		} 
+		return true;
 	}
 
 	/**
@@ -175,13 +181,12 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 			return true;
 		}
 		long modified = f.lastModified();
-
 		if (minDate != null && modified < minDate.getTime()) {
-			logger.log(Level.SEVERE, "File {0} too old", file);
+			logger.log(Level.SEVERE, "File {0} too old", f);
 			return false;
 		}
 		if (maxDate != null && modified > maxDate.getTime()) {
-			logger.log(Level.SEVERE, "File {0} too new", file);
+			logger.log(Level.SEVERE, "File {0} too new", f);
 			return false;
 		}
 		return true;
@@ -201,11 +206,11 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 		long now = Date.from(Instant.now()).getTime();
 		
 		if (minAgeDays != null && modified > now - (minAgeDays * 86_400_000)) {
-			logger.log(Level.SEVERE, "File {0} too new", file.toString());
+			logger.log(Level.SEVERE, "File {0} too new", f);
 			return false;
 		}
 		if (maxAgeDays != null && modified < now - (maxAgeDays * 86_400_000)) {
-			logger.log(Level.SEVERE, "File {0} too old", file.toString()); 
+			logger.log(Level.SEVERE, "File {0} too old", f); 
 			return false;
 		}	
 		return true;
@@ -249,7 +254,7 @@ public class VerifyFileBatchlet extends AbstractBatchlet {
 		}
 
 		for (File f: files) {
-			logger.log(Level.INFO, "Checking {0}", f.toString());
+			logger.log(Level.INFO, "Checking {0}", f);
 			if (!checkExists(f) || !checkSize(f) || !checkDate(f) || !checkAge(f) || !checkMatch(f)) {
 				return BatchStatus.FAILED.toString();
 			}
